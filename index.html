@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .status {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .light {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ESP32 Light Control</h1>
+
+    <div id="lightStatus">
+        <div class="light">
+            Light 1 Status: <span id="light1-status">OFF</span>
+        </div>
+        <div class="light">
+            Light 2 Status: <span id="light2-status">OFF</span>
+        </div>
+    </div>
+
+    <script>
+        const lights = {
+            light1: 'off',
+            light2: 'off'
+        };
+
+        // Handle URL command to change light status
+        const url = new URL(window.location.href);
+        const light = url.searchParams.get('pin');
+        const action = url.searchParams.get('action');
+
+        if (light && action) {
+            if (lights.hasOwnProperty(light)) {
+                lights[light] = action === 'on' ? 'on' : 'off';
+                updateStatus(light);
+            }
+            // Automatically close the page after status change
+            setTimeout(() => window.close(), 1000);
+        }
+
+        // Update the light status on the page
+        function updateStatus(lightName) {
+            document.getElementById(`${lightName}-status`).innerText = lights[lightName].toUpperCase();
+        }
+
+        // Fetch current status for ESP32
+        window.getStatus = function () {
+            return JSON.stringify(lights);
+        }
+    </script>
+</body>
+</html>
